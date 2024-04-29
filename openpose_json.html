@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    }
+    canvas {
+        border: 1px solid black;
+    }
+    .start_exp {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+    .start_exp button {
+      cursor: pointer;
+    /* width: 550px; */
+    /* height: 300px; */
+    font-size: 50px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 1rem 5rem;
+    width: 90%;
+    border-radius: 1rem;
+    font-weight: bold;
+}
+.start_exp button img{max-height: 50%; margin-right: 1rem;}
+    .start_exp button:nth-child(2) {
+      margin: 20px 0;
+    }
+    .user_regis_modal {
+      /* width: 100vh; */
+      height: 80vh;
+      background: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid #ddd;
+      overflow: auto;
+      box-shadow: 0 0 .5rem rgb(0 0 0 .15);
+    }
+    .user_input_box {
+      padding: 30px 50px;
+      border-right: thin solid #b3b3b3;
+    }
+    .user_input_box > div {
+      margin: 30px 0;
+    }
+    .user_input_box > div label{width: 20%;display: block;}
+    .user_input_box > div input{width: 100%;}
+    .user_regis_modal_wrap {
+      display: flex;
+      height: 100%;
+      flex-wrap: wrap;
+    }
+    .user_regis_modal_wrap .user_input_box {
+      /* flex: 1; */
+      width: 100%;
+    }
+    .user_regis_modal_wrap .user_data_box {
+      /* flex: 2; */
+      width: 100%;
+    }
+    .user_regis_modal input {
+      border: 1px solid #ddd;
+      padding: .75rem;
+      outline: none;
+      margin-top: 6px;
+    }
+    .user_regis_modal_btn {
+      display: flex;
+      justify-content: center;
+    }
+    .user_regis_modal_btn button {
+      font-size: 20px;
+      width: 33.3%;
+      height: 110px;
+      /* padding: 20px; */
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+    .user_regis_modal_btn button span {
+      display: block;
+    }
+    .user_regis_modal_btn button:nth-child(2) {
+      margin: 0 3px;
+    }
+    .user_data_box {
+      padding: 30px 50px;
+    }
+    .user_data_box table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+    }
+    .user_data_box table thead {
+      background: #eee;
+    }
+    .user_data_box table tr td {
+      border: 1px solid #b3b3b3;
+      padding: 5px;
+    }
+    .modal_del_btn {
+      padding: 5px;
+      height: 20px;
+      border: 2px solid;
+      border-top: none;
+      border-right: none;
+      cursor: pointer;
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+      border: 0px solid #ddd;
+    }
+    .user_data_select_apply {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .user_data_select_apply button {
+      font-size: 20px;
+      border: 0px solid #b3b3b3;
+      padding: .75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+      background: #73a0e1;
+      color: #fff;
+      border-radius: 0.25rem;
+    }
+
+    .exp_start_btn{background: linear-gradient(90deg, rgba(66,226,152,1) 0%, rgba(60,182,182,1) 100%);}
+    .exp-end_btn{background: linear-gradient(90deg, rgba(88,89,91,1) 0%, rgba(128,130,133,1) 100%);
+}
+    .user_regis{background: linear-gradient(90deg, rgba(127,114,254,1) 0%, rgba(0,109,255,1) 100%);}
+  </style>
+  <body>
+    <div class="start_exp">
+      <button class="exp_start_btn"><img src="img/icon01.png" alt="">시작하기</button>
+      <button class="exp-end_btn"><img src="img/icon02.png" alt="">종료하기</button>
+      <button class="user_regis"><img src="img/icon03.png" alt="">사용자등록</button>
+    </div>
+    <canvas id="poseCanvas" width="1200" height="1200"></canvas> <!-- 이 부분을 추가 -->
+    
+    <div class="user_regis_modal">
+      <div class="user_regis_modal_wrap">
+        <div class="user_input_box">
+          <h2>
+            사용자등록
+          </h2>
+          <div class="user_name">
+            <label for="name">NAME : </label>
+            <input type="text" name="name" id="name" />
+          </div>
+
+          <div class="user_gender">
+            <label for="gender">GENDER : </label>
+            <input type="text" name="gender" id="gender" />
+          </div>
+
+          <div class="user_age">
+            <label for="age">AGE : </label>
+            <input type="text" name="age" id="age" />
+          </div>
+
+          <div class="user_phone">
+            <label for="phone">PHONE : </label>
+            <input type="text" name="phone" id="phone" />
+          </div>
+
+          <div class="user_foot_size">
+            <label for="foot">Foot size : </label>
+            <input type="text" name="foot" id="foot" />
+          </div>
+
+          <div class="user_regis_modal_btn">
+            <button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="#73a0e1"
+                width="30px"
+                height="30px"
+                viewBox="0 0 32 32"
+                version="1.1"
+              >
+                <path
+                  d="M23.313 26.102l-6.296-3.488c2.34-1.841 2.976-5.459 2.976-7.488v-4.223c0-2.796-3.715-5.91-7.447-5.91-3.73 0-7.544 3.114-7.544 5.91v4.223c0 1.845 0.78 5.576 3.144 7.472l-6.458 3.503s-1.688 0.752-1.688 1.689v2.534c0 0.933 0.757 1.689 1.688 1.689h21.625c0.931 0 1.688-0.757 1.688-1.689v-2.534c0-0.994-1.689-1.689-1.689-1.689zM23.001 30.015h-21.001v-1.788c0.143-0.105 0.344-0.226 0.502-0.298 0.047-0.021 0.094-0.044 0.139-0.070l6.459-3.503c0.589-0.32 0.979-0.912 1.039-1.579s-0.219-1.32-0.741-1.739c-1.677-1.345-2.396-4.322-2.396-5.911v-4.223c0-1.437 2.708-3.91 5.544-3.91 2.889 0 5.447 2.44 5.447 3.91v4.223c0 1.566-0.486 4.557-2.212 5.915-0.528 0.416-0.813 1.070-0.757 1.739s0.446 1.267 1.035 1.589l6.296 3.488c0.055 0.030 0.126 0.063 0.184 0.089 0.148 0.063 0.329 0.167 0.462 0.259v1.809zM30.312 21.123l-6.39-3.488c2.34-1.841 3.070-5.459 3.070-7.488v-4.223c0-2.796-3.808-5.941-7.54-5.941-2.425 0-4.904 1.319-6.347 3.007 0.823 0.051 1.73 0.052 2.514 0.302 1.054-0.821 2.386-1.308 3.833-1.308 2.889 0 5.54 2.47 5.54 3.941v4.223c0 1.566-0.58 4.557-2.305 5.915-0.529 0.416-0.813 1.070-0.757 1.739 0.056 0.67 0.445 1.267 1.035 1.589l6.39 3.488c0.055 0.030 0.126 0.063 0.184 0.089 0.148 0.063 0.329 0.167 0.462 0.259v1.779h-4.037c0.61 0.46 0.794 1.118 1.031 2h3.319c0.931 0 1.688-0.757 1.688-1.689v-2.503c-0.001-0.995-1.689-1.691-1.689-1.691z"
+                />
+              </svg>
+              <span>New</span>
+            </button>
+            <button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30px"
+                height="30px"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
+                  fill="#73a0e1"
+                />
+              </svg>
+              <span>Save</span>
+            </button>
+            <button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30px"
+                height="30px"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M10 12V17"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M14 12V17"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M4 7H20"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="user_data_box">
+          <div class="input_user_name">
+            <label for="result_user_name">Name : </label>
+            <input type="text" name="result_user_name" id="result_user_name" />
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <td style="width: 5%"></td>
+                <td>NAME</td>
+                <td>REG DATE</td>
+                <td>GENDER</td>
+                <td>AGE</td>
+                <td>PHONE</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align: center">
+                  <input
+                    type="radio"
+                    name="user_data_select"
+                    id="user_data_select"
+                  />
+                </td>
+                <td>0407</td>
+                <td>2023-12-11</td>
+                <td>M</td>
+                <td>12</td>
+                <td>1234-1234</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="user_data_select_apply">
+            <button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40px"
+                height="40px"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M6 12H18M18 12L13 7M18 12L13 17"
+                  stroke="#73a0e1"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>적용</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal_del_btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20px"
+            height="20px"
+            viewBox="0 0 1024 1024"
+          >
+            <path
+              fill="#000000"
+              d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <script>
+      const modalOpenBtn = document.querySelector(".user_regis");
+      const userRegisModal = document.querySelector(".user_regis_modal");
+      const modalDelBtn = document.querySelector(".modal_del_btn");
+      userRegisModal.style.display = "block";
+      modalOpenBtn.addEventListener("click", function () {
+        userRegisModal.style.display = "block";
+      });
+      modalDelBtn.addEventListener("click", function () {
+        userRegisModal.style.display = "none";
+      });
+    </script>
+    
+  </body>
+  <script>
+    // JSON 데이터
+    const jsonData = {
+      "version": 1.3,
+      "people": [{
+        "person_id": [-1],
+        "pose_keypoints_2d":[266.961,396.205,0.759165,384.459,380.556,0.603094,398.225,484.433,0.618027,545.177,525.483,0.836888,692.065,578.45,0.812294,390.399,290.451,0.636365,541.238,231.736,0.850196,676.369,188.538,0.824406,625.467,380.608,0.288212,607.821,425.632,0.267059,907.573,425.636,0.210203,1117.2,447.213,0.461996,631.343,337.444,0.319452,962.423,317.854,0.504231,1111.37,315.902,0.556738,253.228,415.868,0.833507,247.312,370.797,0.779882,263.048,431.45,0.124712,247.316,345.306,0.544292,1183.82,264.961,0.34385,1179.92,266.91,0.321891,1128.95,329.675,0.312277,1164.19,494.168,0.538426,1156.4,492.258,0.522587,1136.79,433.474,0.368509],"face_keypoints_2d":[],"hand_left_keypoints_2d":[],"hand_right_keypoints_2d":[],"pose_keypoints_3d":[],"face_keypoints_3d":[],"hand_left_keypoints_3d":[],"hand_right_keypoints_3d":[]}]};
+
+
+  
+    // 캔버스 요소 가져오기
+    const canvas = document.getElementById('poseCanvas');
+    const ctx = canvas.getContext('2d');
+  
+    // JSON 데이터에서 키포인트 배열 추출
+    const keypoints = jsonData.people[0].pose_keypoints_2d;
+  
+    // 부위별 색상 정의
+    const colors = {
+      "bg1": "red",
+      "bg2": "blue",
+      "bg3": "green",
+      "bg4": "orange",
+      "bg5": "purple",
+      "bg6": "tomato",
+      "bg7": "pink",
+      "bg8": "cyan",
+      "bg9": "magenta",
+      "bg10": "lime",
+      "bg11": "brown",
+      "bg12": "olive",
+      "bg13": "teal",
+      "bg14": "violet",
+      "bg15": "indigo",
+      "bg16": "gold",
+      "bg17": "silver",
+      "bg18": "red",
+      "bg19": "blue",
+      "bg20": "green",
+      "bg21": "orange",
+      "bg22": "purple",
+      "bg23": "yellow",
+      "bg24": "black"
+    };
+  
+    // 포즈 그리기 함수
+    function drawPose() {
+      // 캔버스 지우기
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      // 선 그리기 함수
+      function drawLine(part1, part2, color) {
+        ctx.beginPath();
+        ctx.moveTo(part1.x, part1.y);
+        ctx.lineTo(part2.x, part2.y);
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      }
+      
+      // 키포인트 객체 생성 함수
+      function createKeypoint(index) {
+        return {
+          x: keypoints[index * 3],
+          y: keypoints[index * 3 + 1],
+          confidence: keypoints[index * 3 + 2]
+        };
+      }
+
+      // 부위별로 선 그리기
+      drawLine(createKeypoint(0), createKeypoint(1), colors.bg1);
+      drawLine(createKeypoint(0), createKeypoint(15), colors.bg2);
+      drawLine(createKeypoint(0), createKeypoint(16), colors.bg3);
+      drawLine(createKeypoint(1), createKeypoint(2), colors.bg4);
+      drawLine(createKeypoint(1), createKeypoint(5), colors.bg5);
+      drawLine(createKeypoint(1), createKeypoint(8), colors.bg6);
+      drawLine(createKeypoint(2), createKeypoint(3), colors.bg7);
+      drawLine(createKeypoint(3), createKeypoint(4), colors.bg8);
+      drawLine(createKeypoint(5), createKeypoint(6), colors.bg9);
+      drawLine(createKeypoint(6), createKeypoint(7), colors.bg10);
+      drawLine(createKeypoint(8), createKeypoint(9), colors.bg11);
+      drawLine(createKeypoint(8), createKeypoint(12), colors.bg12);
+      drawLine(createKeypoint(9), createKeypoint(10), colors.bg13);
+      drawLine(createKeypoint(10), createKeypoint(11), colors.bg14);
+      drawLine(createKeypoint(11), createKeypoint(22), colors.bg15);
+      drawLine(createKeypoint(11), createKeypoint(24), colors.bg16);
+      drawLine(createKeypoint(22), createKeypoint(23), colors.bg17);
+      drawLine(createKeypoint(12), createKeypoint(13), colors.bg18);
+      drawLine(createKeypoint(13), createKeypoint(14), colors.bg19);
+      drawLine(createKeypoint(14), createKeypoint(21), colors.bg20);
+      drawLine(createKeypoint(14), createKeypoint(19), colors.bg21);
+      drawLine(createKeypoint(15), createKeypoint(17), colors.bg22);
+      drawLine(createKeypoint(16), createKeypoint(18), colors.bg23);
+      drawLine(createKeypoint(15), createKeypoint(17), colors.bg24);
+
+    }
+  
+    // 포즈 그리기 호출
+    drawPose();
+  </script>
+
+  </html>
